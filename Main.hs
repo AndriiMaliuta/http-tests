@@ -1,27 +1,26 @@
 module Main where
 
--- import Network.HTTP
-
--- openURL :: String -> IO String
--- openURL x = getResponseBody =<< simpleHTTP (getRequest x)
-
--- main :: IO ()
--- main = do
---     src <- openURL "http://example.com"
---     writeFile "temp.html" src
 import Data.Char
-import Network.HTTP
+-- import Network.HTTP
+import qualified Data.ByteString.Lazy.Char8 as L8
+-- import Network.HTTP.Simple
+import Network.HTTP.Client
+import Network.HTTP.Types.Status (statusCode)
 import Text.HTML.TagSoup
+import Data.Typeable
 
-openURL :: String -> IO String
-openURL x = getResponseBody =<< simpleHTTP (getRequest x)
+-- getData :: String -> String
 
-haskellLastModifiedDateTime :: IO ()
-haskellLastModifiedDateTime = do
-    src <- openURL "http://wiki.haskell.org/Haskell"
-    let lastModifiedDateTime = fromFooter $ parseTags src
-    putStrLn $ "wiki.haskell.org was last modified on " ++ lastModifiedDateTime
-    where fromFooter = unwords . drop 6 . words . innerText . take 2 . dropWhile (~/= "<li id=footer-info-lastmod>")
 
 main :: IO ()
-main = haskellLastModifiedDateTime    
+main = do
+   manSettings <- managerTlsConnection defaultManagerSettings 
+   hostAddrr <- tupleToHostAddress ()
+   manager <- newManager (manSettings (hostAddrr, "", 80)) --defaultManagerSettings
+
+   request <- parseRequest "http://en.wikipedia.org/wiki/French_Revolutionary_Wars"
+   response <- httpLbs request manager
+
+--    putStrLn $ "The status code was: " ++ 
+--         (show $ statusCode $ responseStatus response)
+   putStrLn $ show $ typeOf $ responseBody response

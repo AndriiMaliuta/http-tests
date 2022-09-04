@@ -24,7 +24,8 @@ executable http-tests
   build-depends:
       base >= 4,
       haskell-say >= 1.0.0.0,
-      -- http-client >= 0.7.13.1,
+      http-client >= 0.7.13.1,
+      http-types >= 0.12.3,
       HTTP,
       network       >= 2.4       && < 3.2,
       http-conduit,
